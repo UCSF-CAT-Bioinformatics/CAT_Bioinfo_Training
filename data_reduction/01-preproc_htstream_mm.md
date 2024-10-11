@@ -294,8 +294,8 @@ pwd
 Then create a small dataset.
 
 ```bash
-zcat ../00-RawData/NEB_Mixed-10-ng-1_1M_S383_L008_R1_001.fastq.gz | head -400000 | gzip > mouse_110_WT_C.subset_R1.fastq.gz
-zcat ../00-RawData/mouse_110_WT_C.R2.fastq.gz | head -400000 | gzip > mouse_110_WT_C.subset_R2.fastq.gz
+zcat ../00-RawData/NEB_Mixed-10-ng-1_1M_S383_L008_R1_001.fastq.gz | head -400000 | gzip > NEB_Mixed-10-ng-1.R1.fastq.gz
+zcat ../00-RawData/mouse_110_WT_C.R2.fastq.gz | head -400000 | gzip >  NEB_Mixed-10-ng-1.R2.fastq.gz
 ls -l
 ```
 
@@ -316,8 +316,8 @@ hts_Stats --help
 1. Now lets run ```hts_Stats``` and look at the output.
 
 ```bash
-hts_Stats -1 mouse_110_WT_C.subset_R1.fastq.gz \
-            -2 mouse_110_WT_C.subset_R2.fastq.gz \
+hts_Stats -1 NEB_Mixed-10-ng-1.R1.fastq.gz \
+            -2 NEB_Mixed-10-ng-1.R2.fastq.gz \
             -L mouse_110_WT_C.stats.json > out.tab
 ```
 
@@ -347,8 +347,8 @@ Remember how this output looks, we will revisit it later.
 1. Now lets change the command slightly.
 
 ```bash
-hts_Stats -1 mouse_110_WT_C.subset_R1.fastq.gz \
-            -2 mouse_110_WT_C.subset_R2.fastq.gz \
+hts_Stats -1 NEB_Mixed-10-ng-1.R1.fastq.gz \
+            -2 NEB_Mixed-10-ng-1.R2.fastq.gz \
             -L mouse_110_WT_C.stats.json -f mouse_110_WT_C.stats
 ```
 
@@ -367,14 +367,14 @@ drwxrwxr-x 6 msettles msettles  102 Aug 20 23:20  ..
 -rw-rw-r-- 1 msettles msettles  71K Aug 20 23:25  mouse_110_WT_C.stats.json
 -rw-rw-r-- 1 msettles msettles 4.7M Aug 20 23:25  mouse_110_WT_C.stats_R1.fastq.gz
 -rw-rw-r-- 1 msettles msettles 5.0M Aug 20 23:25  mouse_110_WT_C.stats_R2.fastq.gz
--rw-rw-r-- 1 msettles msettles 4.7M Aug 20 23:22  mouse_110_WT_C.subset_R1.fastq.gz
--rw-rw-r-- 1 msettles msettles 5.0M Aug 20 23:22  mouse_110_WT_C.subset_R2.fastq.gz
+-rw-rw-r-- 1 msettles msettles 4.7M Aug 20 23:22  NEB_Mixed-10-ng-1.R1.fastq.gz
+-rw-rw-r-- 1 msettles msettles 5.0M Aug 20 23:22  NEB_Mixed-10-ng-1.R2.fastq.gz
 -rw-rw-r-- 1 msettles msettles  50M Aug 20 23:23  out.tab
 </div>
 
 * *Which files were generated from hts\_Stats? (mouse_110_WT_C.stats.json, mouse_110_WT_C.stats_R1.fastq.gz, mouse_110_WT_C.stats_R2.fastq.gz)*
 
-* *Did stats change any of the data (are the contents of mouse_110_WT_C.stats_R1.fastq.gz identical to mouse_110_WT_C.subset_R1.fastq.gz)? (no)*
+* *Did stats change any of the data (are the contents of mouse_110_WT_C.stats_R1.fastq.gz identical to NEB_Mixed-10-ng-1.R1.fastq.gz)? (no)*
 
 1. Lets look at the file **mouse_110_WT_C.stats.json**
 
@@ -454,8 +454,8 @@ wget https://ucsf-cat-bioinformatics.github.io/2024-08-RNA-Seq-Analysis/datasets
 1. Run HTStream on the small test set.
 
     ```bash
-    hts_SeqScreener -1 mouse_110_WT_C.subset_R1.fastq.gz \
-                    -2 mouse_110_WT_C.subset_R2.fastq.gz \
+    hts_SeqScreener -1 NEB_Mixed-10-ng-1.R1.fastq.gz \
+                    -2 NEB_Mixed-10-ng-1.R2.fastq.gz \
                     -s ../References/mouse_rrna.fasta -r -L mouse_110_WT_C.rrna.json -f mouse_110_WT_C.rrna
     ```
 
@@ -474,8 +474,8 @@ wget https://ucsf-cat-bioinformatics.github.io/2024-08-RNA-Seq-Analysis/datasets
     ```bash
     cd /mnt/analysis/cat_users/$USER/rnaseq_example/HTS_testing
 
-    hts_Stats -1 mouse_110_WT_C.subset_R1.fastq.gz \
-              -2 mouse_110_WT_C.subset_R2.fastq.gz \
+    hts_Stats -1 NEB_Mixed-10-ng-1.R1.fastq.gz \
+              -2 NEB_Mixed-10-ng-1.R2.fastq.gz \
               -L mouse_110_WT_C.streamed.json |
     hts_SeqScreener -A mouse_110_WT_C.streamed.json \
               -r -s ../References/mouse_rrna.fasta -f mouse_110_WT_C.streamed
@@ -601,7 +601,7 @@ This sequence is P7(rc): **ATCTCGTATGCCGTCTTCTGCTTG**. It should present in any 
 
 ```bash
 cd /mnt/analysis/cat_users/$USER/rnaseq_example/HTS_testing
-zcat mouse_110_WT_C.subset_R1.fastq.gz | grep TCTCGTATGCCGTCTTCTGCTTG
+zcat NEB_Mixed-10-ng-1.R1.fastq.gz | grep TCTCGTATGCCGTCTTCTGCTTG
 ```
 
 ----
@@ -648,8 +648,8 @@ Note that the very highly expressed transcript is [Lysozyme 2, ENSMUST0000009216
 cd /mnt/analysis/cat_users/$USER/rnaseq_example/HTS_testing
 
 hts_Stats -L mouse_110_WT_C_htsStats.json -N "initial stats" \
-    -1 mouse_110_WT_C.subset_R1.fastq.gz \
-    -2 mouse_110_WT_C.subset_R2.fastq.gz | \
+    -1 NEB_Mixed-10-ng-1.R1.fastq.gz \
+    -2 NEB_Mixed-10-ng-1.R2.fastq.gz | \
 hts_SeqScreener -A mouse_110_WT_C_htsStats.json -N "screen phix" | \
 hts_SeqScreener -A mouse_110_WT_C_htsStats.json -N "count the number of rRNA reads"\
      -r -s ../References/mouse_rrna.fasta | \
