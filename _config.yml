@@ -7,7 +7,7 @@ navigation:
 
   - heading: October 2024
   - title: Intro preprocessing
-    url: data_reduction/01-preproc_htstream_mm.md
+    url: data_reduction/01-preproc_htstream_mm
 
   - heading: Support
   - title: Cheat Sheets
