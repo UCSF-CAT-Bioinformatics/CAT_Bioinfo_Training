@@ -6,8 +6,8 @@ navigation:
     url: /
 
   - heading: October 2024
-  - title: Intro to the Workshop
-    url: base/welcome
+  - title: Intro preprocessing
+    url: data_reduction/01-preproc_htstream_mm.md
 
   - heading: Support
   - title: Cheat Sheets
