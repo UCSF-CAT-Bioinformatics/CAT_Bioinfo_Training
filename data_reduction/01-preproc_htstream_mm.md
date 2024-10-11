@@ -9,6 +9,7 @@ cd
 mkdir -p /mnt/analysis/cat_users/$USER/rnaseq_example
 ```
 
+
 ## Link raw fastq files
 
 Next, go into that directory, create a raw data directory (we are going to call this 00-RawData) and cd into that directory. Lets then create symbolic links to the sample fastq files that contains the raw data.
@@ -19,6 +20,79 @@ cd /mnt/analysis/cat_users/$USER/rnaseq_example
 mkdir 00-RawData
 cd 00-RawData/
 ln -s /mnt/analysis/workshop/CAT_Training/htstream/smdata/* .
+```
+
+## Getting to know your data
+
+Now, take a look at the raw data directory.
+
+```bash
+ls /mnt/analysis/cat_users/$USER/rnaseq_example/00-RawData
+```
+
+
+Lets get a better look at all the files.
+
+
+```bash
+ls -lah *
+```
+
+Pick a directory and go into it. View the contents of the files using the 'less' command, when gzipped used 'zless' (which is just the 'less' command for gzipped files):
+
+
+```bash
+zless NEB_Mixed-10-ng-1_1M_S383_L008_R1_001.fastq.gz
+```
+
+
+Make sure you can identify which lines correspond to a read and which lines are the header, sequence, and quality values. Press 'q' to exit this screen.
+
+
+Then, let's figure out the number of reads in this file. A simple way to do that is to count the number of lines and divide by 4 (because the record of each read uses 4 lines). In order to do this use cat to output the uncompressed file and pipe that to "wc" to count the number of lines:
+
+
+```bash
+zcat NEB_Mixed-10-ng-1_1M_S383_L008_R1_001.fastq.gz | wc -l
+```
+
+
+Divide this number by **4** and you have the number of reads in this file.
+
+
+One more thing to try is to figure out the length of the reads without counting each nucleotide. First get the first 4 lines of the file (i.e. the first record):
+
+```bash
+zcat NEB_Mixed-10-ng-1_1M_S383_L008_R1_001.fastq.gz  | head -2 | tail -1
+```
+
+
+Note the header lines (1st and 3rd line) and sequence and quality lines (2nd and 4th) in each 4-line fastq block.
+
+
+Then, copy and paste the DNA sequence line into the following command (replace [sequence] with the line):
+
+
+```bash
+echo -n [sequence] | wc -c
+```
+
+
+This will give you the length of the read. Also can do the bash one liner:
+
+
+```bash
+echo -n $(zcat NEB_Mixed-10-ng-1_1M_S383_L008_R1_001.fastq.gz  | head -2 | tail -1) | wc -c
+```
+
+
+See if you can figure out how this command works.
+
+This will give you the read count without doing any division. See if you can figure out how this command works:
+
+
+```bash
+zcat NEB_Mixed-10-ng-1_1M_S383_L008_R1_001.fastq.gz | grep -c "^@A00461:28"
 ```
 
 ### Learning Objectives
@@ -220,7 +294,7 @@ pwd
 Then create a small dataset.
 
 ```bash
-zcat ../00-RawData/mouse_110_WT_C.R1.fastq.gz | head -400000 | gzip > mouse_110_WT_C.subset_R1.fastq.gz
+zcat ../00-RawData/NEB_Mixed-10-ng-1_1M_S383_L008_R1_001.fastq.gz | head -400000 | gzip > mouse_110_WT_C.subset_R1.fastq.gz
 zcat ../00-RawData/mouse_110_WT_C.R2.fastq.gz | head -400000 | gzip > mouse_110_WT_C.subset_R2.fastq.gz
 ls -l
 ```
@@ -726,7 +800,7 @@ cp -r /share/workshop/original_dataset/01-HTS_Preproc /share/workshop/$USER/rnas
 
 ```bash
 cd /share/workshop/$USER/rnaseq_example
-zless 00-RawData/mouse_110_WT_C.R1.fastq.gz
+zless 00-RawData/NEB_Mixed-10-ng-1_1M_S383_L008_R1_001.fastq.gz
 ```
 
 
@@ -745,7 +819,7 @@ If you scroll through the data (using the spacebar), you will see that some of t
 Lets grep for the sequence and get an idea of where it occurs in the raw sequences:
 
 ```bash
-zcat  00-RawData/mouse_110_WT_C.R1.fastq.gz | grep --color=auto  AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC
+zcat  00-RawData/NEB_Mixed-10-ng-1_1M_S383_L008_R1_001.fastq.gz | grep --color=auto  AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC
 ```
 
  * *What do you observe? Are these sequences useful for analysis?*
@@ -758,7 +832,7 @@ zcat  00-RawData/mouse_110_WT_C.R1.fastq.gz | grep --color=auto  AGATCGGAAGAGCAC
 Lets grep for the sequence and count occurrences
 
 ```bash
-zcat  00-RawData/mouse_110_WT_C.R1.fastq.gz | grep  AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC | wc -l
+zcat  00-RawData/NEB_Mixed-10-ng-1_1M_S383_L008_R1_001.fastq.gz | grep  AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC | wc -l
 zcat  01-HTS_Preproc/mouse_110_WT_C/mouse_110_WT_C_R1.fastq.gz | grep  AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC | wc -l
 ```
 
