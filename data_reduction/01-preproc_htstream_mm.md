@@ -1,11 +1,25 @@
 # RNA Sequence Preprocessing
 
-This document assumes [project_setup](./00-project_setup_mm.md) has been completed.
+##  Creating a Project Directory
+
+First, create a directory for you and the example project in the Lesson share directory:
 
 ```bash
-cd /share/workshop/$USER/rnaseq_example
+cd
+mkdir -p /mnt/analysis/cat_users/$USER/rnaseq_example
 ```
 
+## Link raw fastq files
+
+Next, go into that directory, create a raw data directory (we are going to call this 00-RawData) and cd into that directory. Lets then create symbolic links to the sample fastq files that contains the raw data.
+
+
+```bash
+cd /mnt/analysis/cat_users/$USER/rnaseq_example
+mkdir 00-RawData
+cd 00-RawData/
+ln -s /mnt/analysis/workshop/CAT_Training/htstream/smdata/* .
+```
 
 ### Learning Objectives
 
