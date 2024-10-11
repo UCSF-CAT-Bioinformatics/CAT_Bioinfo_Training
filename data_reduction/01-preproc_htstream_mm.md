@@ -92,7 +92,7 @@ This will give you the read count without doing any division. See if you can fig
 
 
 ```bash
-zcat NEB_Mixed-10-ng-1_1M_S383_L008_R1_001.fastq.gz | grep -c "^@A00461:28"
+zcat NEB_Mixed-10-ng-1_1M_S383_L008_R1_001.fastq.gz | grep -c "^@LH00132"
 ```
 
 ### Learning Objectives
