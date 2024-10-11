@@ -1,0 +1,26 @@
+theme: jekyll-theme-minimal
+title: 'CAT Internal Training'
+show_downloads: True
+navigation:
+  - title: Home
+    url: /
+
+  - heading: October 2024
+  - title: Intro to the Workshop
+    url: base/welcome
+
+  - heading: Support
+  - title: Cheat Sheets
+    url: base/cheatSheetIndex
+  - title: Software and Links
+    url: software_scripts/software
+  - title: Scripts
+    url: software_scripts/scripts_links
+
+  - heading: ETC
+  - title: CAT website
+    url: https://cat.ucsf.edu/
+  - title: Github page
+    url: https://github.com/UCSF-CAT-Bioinformatics/CAT_Bioinfo_Training
+  - title: Report Errors
+    url: https://github.com/UCSF-CAT-Bioinformatics/CAT_Bioinfo_Training/issues

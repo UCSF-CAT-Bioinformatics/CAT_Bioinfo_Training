@@ -1,0 +1,91 @@
+/LRTI-WRK1_GXP
+    _filelist
+    _finalstate
+    _invocation
+    _jobmode
+    _log
+    LRTI-224_GXP.mri.tgz
+    _mrosource
+    outs/
+    ├── analysis
+    │   ├── clustering
+    │   │   ├── gene_expression_graphclust
+    │   │   │   └── clusters.csv
+    │   │   ├── gene_expression_kmeans_10_clusters
+    │   │   │   └── clusters.csv
+    │   │   ├── gene_expression_kmeans_2_clusters
+    │   │   │   └── clusters.csv
+    │   │   ├── gene_expression_kmeans_3_clusters
+    │   │   │   └── clusters.csv
+    │   │   ├── gene_expression_kmeans_4_clusters
+    │   │   │   └── clusters.csv
+    │   │   ├── gene_expression_kmeans_5_clusters
+    │   │   │   └── clusters.csv
+    │   │   ├── gene_expression_kmeans_6_clusters
+    │   │   │   └── clusters.csv
+    │   │   ├── gene_expression_kmeans_7_clusters
+    │   │   │   └── clusters.csv
+    │   │   ├── gene_expression_kmeans_8_clusters
+    │   │   │   └── clusters.csv
+    │   │   └── gene_expression_kmeans_9_clusters
+    │   │       └── clusters.csv
+    │   ├── diffexp
+    │   │   ├── gene_expression_graphclust
+    │   │   │   └── differential_expression.csv
+    │   │   ├── gene_expression_kmeans_10_clusters
+    │   │   │   └── differential_expression.csv
+    │   │   ├── gene_expression_kmeans_2_clusters
+    │   │   │   └── differential_expression.csv
+    │   │   ├── gene_expression_kmeans_3_clusters
+    │   │   │   └── differential_expression.csv
+    │   │   ├── gene_expression_kmeans_4_clusters
+    │   │   │   └── differential_expression.csv
+    │   │   ├── gene_expression_kmeans_5_clusters
+    │   │   │   └── differential_expression.csv
+    │   │   ├── gene_expression_kmeans_6_clusters
+    │   │   │   └── differential_expression.csv
+    │   │   ├── gene_expression_kmeans_7_clusters
+    │   │   │   └── differential_expression.csv
+    │   │   ├── gene_expression_kmeans_8_clusters
+    │   │   │   └── differential_expression.csv
+    │   │   └── gene_expression_kmeans_9_clusters
+    │   │       └── differential_expression.csv
+    │   ├── pca
+    │   │   └── gene_expression_10_components
+    │   │       ├── components.csv
+    │   │       ├── dispersion.csv
+    │   │       ├── features_selected.csv
+    │   │       ├── projection.csv
+    │   │       └── variance.csv
+    │   ├── tsne
+    │   │   └── gene_expression_2_components
+    │   │       └── projection.csv
+    │   └── umap
+    │       └── gene_expression_2_components
+    │           └── projection.csv
+    ├── cloupe.cloupe
+    ├── filtered_feature_bc_matrix
+    │   ├── barcodes.tsv.gz
+    │   ├── features.tsv.gz
+    │   └── matrix.mtx.gz
+    ├── filtered_feature_bc_matrix.h5
+    ├── metrics_summary.csv
+    ├── molecule_info.h5
+    ├── possorted_genome_bam.bam
+    ├── possorted_genome_bam.bam.bai
+    ├── raw_feature_bc_matrix
+    │   ├── barcodes.tsv.gz
+    │   ├── features.tsv.gz
+    │   └── matrix.mtx.gz
+    ├── raw_feature_bc_matrix.h5
+    └── web_summary.html
+    _perf
+    _perf._truncated_
+    SC_RNA_COUNTER_CS/
+    ├── Pipeline output
+    _sitecheck
+    _tags
+    _timestamp
+    _uuid
+    _vdrkill
+    _versions
