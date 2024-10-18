@@ -473,9 +473,6 @@ wget https://ucsf-cat-bioinformatics.github.io/CAT_BIOINFO_TRAINING/datasets/hum
 
         * *Check the JSON file that is produced. Were any PhiX reads identified?* (1)
 
-    * *Try to figure out how to use hts_Stats in combination with grep to search for reads that contain the sequence "CCGTCTTCTGCTTG". How many were there? Do you notice anything strange about them?
-
-
 --------
 
 ## A RNAseq preprocessing pipeline
@@ -484,7 +481,7 @@ wget https://ucsf-cat-bioinformatics.github.io/CAT_BIOINFO_TRAINING/datasets/hum
 1. hts_SeqScreener: screen out (remove) phiX
 1. hts_SeqScreener: screen for (count) rRNA
 1. hts_SuperDeduper: identify and remove PCR duplicates
-1. hts_AdapterTrimmer: identify and remove adapter sequence
+1. hts_Overlapper: overlap, identify and remove adapter sequence
 1. hts_PolyATTrim: remove polyA/T from the end of reads.
 1. hts_NTrimmer: trim to remove any remaining N characters
 1. hts_QWindowTrim: remove poor quality bases
@@ -508,7 +505,7 @@ For RNAseq and variant analysis (any mapping based technique) it is not critical
 
 ### Removing PCR duplicates with hts_SuperDeduper.
 
-Removing PCR duplicates can be **controversial** for RNAseq, but there is some argument in favor of it for paired-end data. In particular, duplication rate tells you a lot about the original complexity of each sample and potential impact of sequencing depth.
+Removing PCR duplicates can be **controversial** for RNAseq without UMIs, but there is some argument in favor of it for paired-end data. In particular, duplication rate tells you a lot about the original complexity of each sample and potential impact of sequencing depth.
 
 __**However, it would never be a good idea to do PCR duplicate removal on Single-End reads!**__
 
@@ -627,7 +624,7 @@ hts_SeqScreener -A NEB_Mixed-10-ng-1_htsStats.json -N "screen phix" | \
 hts_SeqScreener -A NEB_Mixed-10-ng-1_htsStats.json -N "count the number of rRNA reads"\
      -r -s ../References/human_rrna.fasta | \
 hts_SuperDeduper -A NEB_Mixed-10-ng-1_htsStats.json -N "remove PCR duplicates" | \
-hts_AdapterTrimmer -A NEB_Mixed-10-ng-1_htsStats.json -N "trim adapters" | \
+hts_Overlapper -A NEB_Mixed-10-ng-1_htsStats.json -N "trim adapters" | \
 hts_PolyATTrim  -A NEB_Mixed-10-ng-1_htsStats.json -N "trim adapters" | \
 hts_NTrimmer -A NEB_Mixed-10-ng-1_htsStats.json -N "remove any remaining 'N' characters" | \
 hts_QWindowTrim -A NEB_Mixed-10-ng-1_htsStats.json -N "quality trim the ends of reads" | \
@@ -660,7 +657,7 @@ We can now run the preprocessing routine across all samples on the real data usi
 
 ```bash
 cd /mnt/analysis/cat_users/$USER/rnaseq_example  # We'll run this from the main directory
-wget https://ucsf-cat-bioinformatics.github.io/2024-08-RNA-Seq-Analysis/software_scripts/scripts/hts_preproc.sh
+wget https://ucsf-cat-bioinformatics.github.io/CAT_BIOINFO_TRAINING/software_scripts/scripts/hts_preproc.sh
 less hts_preproc.sh
 ```
 
@@ -689,7 +686,7 @@ do
         hts_SeqScreener -A ${outpath}/${sample}/${sample}.json -N 'count the number of rRNA reads'\
             -r -s References/human_rrna.fasta | \
         hts_SuperDeduper -A ${outpath}/${sample}/${sample}.json -N 'remove PCR duplicates' | \
-        hts_AdapterTrimmer -A ${outpath}/${sample}/${sample}.json -N 'trim adapters' | \
+        hts_Overlapper -A ${outpath}/${sample}/${sample}.json -N 'trim adapters' | \
         hts_PolyATTrim --no-left --skip_polyT  -A ${outpath}/${sample}/${sample}.json -N 'remove polyAT tails' | \
         hts_NTrimmer -A ${outpath}/${sample}/${sample}.json -N 'remove any remaining N characters' | \
         hts_QWindowTrim -A ${outpath}/${sample}/${sample}.json -N 'quality trim the ends of reads' | \
@@ -762,12 +759,6 @@ du -sh *
 ```
 
 *All of the samples started with the same number of reads. What can you tell from the file sizes about how cleaning went across the samples?*
-
-**IF for some reason HTStream didn't finish, the files are corrupted or you missed the session, please let me know and I will help. You can also copy over the HTStream output.**
-
-```bash
-cp -r /share/workshop/original_dataset/01-HTS_Preproc /mnt/analysis/cat_users/$USER/rnaseq_example/.
-```
 
 1. Let's take a look at the differences in adapter content between the input and output files. First look at the input file:
 
