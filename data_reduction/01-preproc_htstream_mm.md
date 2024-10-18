@@ -106,7 +106,7 @@ zcat NEB_Mixed-10-ng-1_1M_S383_L008_R1_001.fastq.gz | grep -c "^@LH00132"
    - List common preprocessing steps such as removing unwanted sequences (vectors, adapters, primers), merging overlapping reads, removing low-quality bases, and eliminating PCR duplicates.
 
 3. **Analyze RNA-seq Library Preparation Details**
-   - Learn about different RNA-seq library preparation methods, such as the SureSelect Automated Strand Specific RNA Library Preparation Kit, and their impact on the strandedness of the library and read orientations.
+   - Understand different RNA-seq library preparation methods, and their impact on the strandedness of the library and read orientations.
 
    - Determine how to confirm library strandedness by mapping reads to housekeeping genes and checking the orientation and presence of poly-A/T signals.
 
@@ -123,7 +123,7 @@ zcat NEB_Mixed-10-ng-1_1M_S383_L008_R1_001.fastq.gz | grep -c "^@LH00132"
    - Understand the differences between traditional preprocessing pipelines and HTStream’s streaming approach, including the benefits of reduced storage and improved efficiency.
 
 6. **Understand HTStream Pipeline Components:**
-   - **Objective:** Explain the role and function of each component in the HTStream preprocessing pipeline, including `hts_Stats`, `hts_SeqScreener`, `hts_SuperDeduper`, `hts_AdapterTrimmer`, `hts_PolyATTrim`, `hts_NTrimmer`, `hts_QWindowTrim`, and `hts_LengthFilter`.
+   - **Objective:** Explain the role and function of each component in the HTStream preprocessing pipeline, including `hts_Stats`, `hts_SeqScreener`, `hts_SuperDeduper`, `hts_Overlapper`, `hts_PolyATTrim`, `hts_NTrimmer`, `hts_QWindowTrim`, and `hts_LengthFilter`.
    - **Outcome:** Be able to articulate how each tool contributes to data quality and why it is important in RNA-seq preprocessing.
 
 7.  **Preprocessing Workflow Optimization:**
@@ -161,35 +161,7 @@ PCA/MDS plots of the preprocessing summary are a great way to look for technical
 <img src="preproc_mm_figures/preproc_flowchart.png" alt="preproc_flowchart" width="80%"/>
 
 
-In order to better understand and preprocess an RNA-seq data set (and to determine the types of problems we might encounter), it is a good idea to learn what type of library prep kit was used, and how it works.
-
-For our data set, [Selimoglu-Buet et al.](https://www.nature.com/articles/s41467-018-07801-x) report the following:
-
-> *SureSelect Automated Strand Specific RNA Library Preparation Kit* was used according to the manufacturer’s instructions with the Bravo Platform. Briefly, 100 ng of total RNA sample was used for poly-A mRNA selection using oligo(dT) beads and subjected to thermal mRNA fragmentation. The fragmented mRNA samples were subjected to cDNA synthesis and were further converted into double-stranded DNA using the reagents supplied in the kit, and the resulting double-stranded DNA was used for library preparation. The final libraries were sequenced on an Hiseq 2000 for human samples and on [NovaSeq 6000](https://www.illumina.com/content/dam/illumina-marketing/documents/products/appnotes/novaseq-hiseq-q30-app-note-770-2017-010.pdf) for mice samples (Illumina) in paired-end 100 bp mode in order to reach at least 30 millions reads per sample at Gustave Roussy.
-
-Unfortunately the methods don't provide much information about the strandedness of the library. We can learn more by looking up the [user manual](https://www.agilent.com/cs/library/usermanuals/Public/G9691-90010.pdf). Often times manufacturer web sites and user manuals will contain some hints regarding analysis.
-
-````
-Sequence analysis guidelines
-
-The SureSelect RNA sequencing library preparation method preserves RNA strandedness using dUTP second- strand marking. The sequence of read 1, which starts at the P5 end, matches the reverse complement of the poly- A RNA transcript strand. Read 2, which starts at the P7 end, matches the poly-A RNA transcript strand. When running analysis of this data to determine strandedness, it is important to include this information. For example, when using the Picard tools (https://broadinstitute.github.io/picard) to calculate RNA sequencing metrics, it is important to include the parameter STRAND_SPECIFICITY= SECOND_READ_TRANSCRIPTION_STRAND to correctly calculate the strand specificity metrics.
-````
-
-Agilent has also produced a [poster](https://www.agilent.com/cs/library/posters/Public/ASHG-poster-SureSelect-strand-specific%20RNA%20library-prep-kit-fast-streamlined-workflow-for-libraries-from-total-RNA.pdf) with additional details about the qualities of this library. The figures below provide additional detail about the library and what to expect.
-
-<img src="preproc_mm_figures/SureSelectLibraryPrep.png" alt="libraryPrep" width="80%"/>
-
-<img src="preproc_mm_figures/SureSelectLibraryCoverage.png" alt="libraryPrep" width="80%"/>
-
-
-Based on the information above we can conclude that R1 should probably always be in reverse complement orientation with respect to the transcript, and that few reads should have poly-(A/T) signals.  
-
-To double check, we could map reads to a "housekeeping gene" like beta actin (NM_007393.5 Mus musculus actin, beta (Actb), mRNA
-). Examining the reads can help us confirm our conclusions about the library, and inform decisions about how to clean in.
-
-
-<img src="preproc_mm_figures/Geneious_read_orientation_check.png" alt="libraryPrep" width="100%"/>
-
+In order to better understand and preprocess an RNA-seq data set (and to determine the types of problems we might encounter), it is a good idea to know what type of library prep kit was used, and how it works.
 
 ### An RNAseq Preprocessing Workflow
 
@@ -333,11 +305,13 @@ less out.tab
 ```
 
 The output was difficult to understand, lets try without line wrapping (note that you can also type ```-S``` from within ```less``` if you forget). Scroll with the arrow keys, left, right, up, and down.
+
 ```bash
 less -S out.tab
 ```
 
 And delete out.tab since we are done with it:
+
 ```bash
 rm out.tab
 ```
@@ -361,15 +335,14 @@ ls -lah
 ```
 
 <div class="output">
-total 69M
-drwxrwxr-x 2 msettles msettles  269 Aug 20 23:24  .
-drwxrwxr-x 6 msettles msettles  102 Aug 20 23:20  ..
--rw-rw-r-- 1 msettles msettles  71K Aug 20 23:25  NEB_Mixed-10-ng-1.stats.json
--rw-rw-r-- 1 msettles msettles 4.7M Aug 20 23:25  NEB_Mixed-10-ng-1.stats_R1.fastq.gz
--rw-rw-r-- 1 msettles msettles 5.0M Aug 20 23:25  NEB_Mixed-10-ng-1.stats_R2.fastq.gz
--rw-rw-r-- 1 msettles msettles 4.7M Aug 20 23:22  NEB_Mixed-10-ng-1.R1.fastq.gz
--rw-rw-r-- 1 msettles msettles 5.0M Aug 20 23:22  NEB_Mixed-10-ng-1.R2.fastq.gz
--rw-rw-r-- 1 msettles msettles  50M Aug 20 23:23  out.tab
+total 25M
+drwxrwxrwx 1 matt matt  312 Oct 18 11:02 .
+drwxrwxrwx 1 matt matt   42 Oct 11 14:10 ..
+-rwxrwxrwx 1 matt matt 6.1M Oct 18 11:00 NEB_Mixed-10-ng-1.R1.fastq.gz
+-rwxrwxrwx 1 matt matt 6.3M Oct 18 11:00 NEB_Mixed-10-ng-1.R2.fastq.gz
+-rwxrwxrwx 1 matt matt 104K Oct 18 11:02 NEB_Mixed-10-ng-1.stats.json
+-rwxrwxrwx 1 matt matt 6.1M Oct 18 11:02 NEB_Mixed-10-ng-1.stats_R1.fastq.gz
+-rwxrwxrwx 1 matt matt 6.3M Oct 18 11:02 NEB_Mixed-10-ng-1.stats_R2.fastq.gz
 </div>
 
 * *Which files were generated from hts\_Stats? (NEB_Mixed-10-ng-1.stats.json, NEB_Mixed-10-ng-1.stats_R1.fastq.gz, NEB_Mixed-10-ng-1.stats_R2.fastq.gz)*
@@ -392,50 +365,50 @@ Ribosomal RNA can make up 90% or more of a typical _total RNA_ sample. Most libr
 
 ### Before we do so we need to find sequences of ribosomal RNA to screen against.
 
-We will use these sequences to identify rRNA in our reads, which are from mouse. One way to do that is to go to [NCBI](https://www.ncbi.nlm.nih.gov/) and search for them.
+We will use these sequences to identify rRNA in our reads, which are from human. One way to do that is to go to [NCBI](https://www.ncbi.nlm.nih.gov/) and search for them.
 
-1. First, go to [NCBI](https://www.ncbi.nlm.nih.gov/) and in the Search drop down select "Taxonomy" and search for "mouse".
+1. First, go to [NCBI](https://www.ncbi.nlm.nih.gov/) and in the Search drop down select "Taxonomy" and search for "human".
 
-    <img src="preproc_mm_figures/ncbi_mm_01.png" alt="ncbi1" width="80%" style="border:5px solid #ADD8E6;"/>
+    <img src="preproc_mm_figures/ncbi_hs_01.png" alt="ncbi1" width="80%" style="border:5px solid #ADD8E6;"/>
 
-1. Click on "Mus musculus".
+1. Click on "Homo sapiens".
 
-    <img src="preproc_mm_figures/ncbi_mm_02.png" alt="ncbi2" width="80%" style="border:5px solid #ADD8E6;"/>
+    <img src="preproc_mm_figures/ncbi_hs_02.png" alt="ncbi2" width="80%" style="border:5px solid #ADD8E6;"/>
 
-1. Click on "Mus musculus" again.
+1. Click on "Homo sapiens" again.
 
-    <img src="preproc_mm_figures/ncbi_mm_03.png" alt="ncbi3" width="80%" style="border:5px solid #ADD8E6;"/>
+    <img src="preproc_mm_figures/ncbi_hs_03.png" alt="ncbi3" width="80%" style="border:5px solid #ADD8E6;"/>
 
 1. Click on the "Subtree links" for Nucleotide.
 
-    <img src="preproc_mm_figures/ncbi_mm_04.png" alt="ncbi4" width="80%" style="border:5px solid #ADD8E6;"/>
+    <img src="preproc_mm_figures/ncbi_hs_04.png" alt="ncbi4" width="80%" style="border:5px solid #ADD8E6;"/>
 
 1. Under Molecule Types, click on "rRNA" (left hand side).
 
-    <img src="preproc_mm_figures/ncbi_mm_05.png" alt="ncbi5" width="80%" style="border:5px solid #ADD8E6;"/>
+    <img src="preproc_mm_figures/ncbi_hs_05.png" alt="ncbi5" width="80%" style="border:5px solid #ADD8E6;"/>
 
 1. Click on "Send", choose "File", choose Format "FASTA", and click on "Create File".
 
-    <img src="preproc_mm_figures/ncbi_mm_06.png" alt="ncbi6" width="80%" style="border:5px solid #ADD8E6;"/>
+    <img src="preproc_mm_figures/ncbi_hs_06.png" alt="ncbi6" width="80%" style="border:5px solid #ADD8E6;"/>
 
 
-Save this file to your computer, and rename it to 'mouse_rrna.fasta'.
+Save this file to your computer, and rename it to 'human_rrna.fasta'.
 
-Upload your mouse_rrna.fasta file **to the 'References' directory** in your project folder using either **scp** or FileZilla (or equivalent).
+Upload your human_rrna.fasta file **to a 'References' directory** in your project folder using either **scp** or FileZilla (or equivalent).
 
-Or if you feel like 'cheating', just copy/paste the contents of mouse_rrna.fa using nano into a file named /mnt/analysis/cat_users/$USER/rnaseq_example/References/mouse_rrna.fasta
+Or if you feel like 'cheating', just copy/paste the contents of human_rrna.fa using nano into a file named /mnt/analysis/cat_users/$USER/rnaseq_example/References/human_rrna.fasta
 
 ```bash
-nano /mnt/analysis/cat_users/$USER/rnaseq_example/References/mouse_rrna.fasta
+nano /mnt/analysis/cat_users/$USER/rnaseq_example/References/human_rrna.fasta
 ```
 
-Paste contents of mouse_rrna.fa and save
+Paste contents of human_rrna.fa and save
 
 
 This is *really* cheating, but if all else fails, download the file as follows:
 ```bash
 cd /mnt/analysis/cat_users/$USER/rnaseq_example/References
-wget https://ucsf-cat-bioinformatics.github.io/2024-08-RNA-Seq-Analysis/datasets/mouse_rrna.fasta
+wget https://ucsf-cat-bioinformatics.github.io/CAT_BIOINFO_TRAINING/datasets/human_rrna.fasta
 ```
 
 ### Using HTStream to count ribosomal rna (not remove, but just to count the occurrences).
@@ -456,7 +429,7 @@ wget https://ucsf-cat-bioinformatics.github.io/2024-08-RNA-Seq-Analysis/datasets
     ```bash
     hts_SeqScreener -1 NEB_Mixed-10-ng-1.R1.fastq.gz \
                     -2 NEB_Mixed-10-ng-1.R2.fastq.gz \
-                    -s ../References/mouse_rrna.fasta -r -L NEB_Mixed-10-ng-1.rrna.json -f NEB_Mixed-10-ng-1.rrna
+                    -s ../References/human_rrna.fasta -r -L NEB_Mixed-10-ng-1.rrna.json -f NEB_Mixed-10-ng-1.rrna
     ```
 
     * *Which files were generated from hts\_SeqScreener?*
@@ -478,7 +451,7 @@ wget https://ucsf-cat-bioinformatics.github.io/2024-08-RNA-Seq-Analysis/datasets
               -2 NEB_Mixed-10-ng-1.R2.fastq.gz \
               -L NEB_Mixed-10-ng-1.streamed.json |
     hts_SeqScreener -A NEB_Mixed-10-ng-1.streamed.json \
-              -r -s ../References/mouse_rrna.fasta -f NEB_Mixed-10-ng-1.streamed
+              -r -s ../References/human_rrna.fasta -f NEB_Mixed-10-ng-1.streamed
     ```
 
     Note the pipe, ```|```, between the two applications!
@@ -652,7 +625,7 @@ hts_Stats -L NEB_Mixed-10-ng-1_htsStats.json -N "initial stats" \
     -2 NEB_Mixed-10-ng-1.R2.fastq.gz | \
 hts_SeqScreener -A NEB_Mixed-10-ng-1_htsStats.json -N "screen phix" | \
 hts_SeqScreener -A NEB_Mixed-10-ng-1_htsStats.json -N "count the number of rRNA reads"\
-     -r -s ../References/mouse_rrna.fasta | \
+     -r -s ../References/human_rrna.fasta | \
 hts_SuperDeduper -A NEB_Mixed-10-ng-1_htsStats.json -N "remove PCR duplicates" | \
 hts_AdapterTrimmer -A NEB_Mixed-10-ng-1_htsStats.json -N "trim adapters" | \
 hts_PolyATTrim  -A NEB_Mixed-10-ng-1_htsStats.json -N "trim adapters" | \
