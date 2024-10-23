@@ -1,7 +1,7 @@
 #!/bin/bash
 
+## runs HTStream across a number all samples in a project
 ## assumes htstream is available on the Path
-
 start=`date +%s`
 echo $HOSTNAME
 

@@ -651,7 +651,18 @@ Note the patterns:
 
 * *Anything else interesting?*
 
-## Run HTStream on the Project.
+## Lets Finish it up run HTStream on the Project.
+
+First I created 3 smaller samples, each with 1 Million reads.
+
+```bash
+cd /mnt/analysis/cat_users/$USER/rnaseq_example
+rm -rf 00-RawData
+mkdir 00-RawData
+cd 00-RawData/
+ln -s /mnt/analysis/workshop/CAT_Training/htstream/smdata/* .
+```
+
 
 We can now run the preprocessing routine across all samples on the real data using a bash script, [hts_preproc.sh](../software_scripts/scripts/hts_preproc.sh), that we should take a look at now.
 
