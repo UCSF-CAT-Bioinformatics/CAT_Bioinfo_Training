@@ -408,7 +408,7 @@ Paste contents of human_rrna.fa and save
 This is *really* cheating, but if all else fails, download the file as follows:
 ```bash
 cd /mnt/analysis/cat_users/$USER/rnaseq_example/References
-wget https://ucsf-cat-bioinformatics.github.io/CAT_BIOINFO_TRAINING/datasets/human_rrna.fasta
+wget https://ucsf-cat-bioinformatics.github.io/CAT_Bioinfo_Training/datasets/human_rrna.fasta
 ```
 
 ### Using HTStream to count ribosomal rna (not remove, but just to count the occurrences).
@@ -661,14 +661,16 @@ rm -rf 00-RawData
 mkdir 00-RawData
 cd 00-RawData/
 ln -s /mnt/analysis/workshop/CAT_Training/htstream/smdata/* .
-```
 
+ls *R1* | sed -E 's/_L008_.*.fastq.gz//' | sort -u > ../samples.txt
+cat ../samples.txt
+```
 
 We can now run the preprocessing routine across all samples on the real data using a bash script, [hts_preproc.sh](../software_scripts/scripts/hts_preproc.sh), that we should take a look at now.
 
 ```bash
 cd /mnt/analysis/cat_users/$USER/rnaseq_example  # We'll run this from the main directory
-wget https://ucsf-cat-bioinformatics.github.io/CAT_BIOINFO_TRAINING/software_scripts/scripts/hts_preproc.sh
+wget https://ucsf-cat-bioinformatics.github.io/CAT_Bioinfo_Training/software_scripts/scripts/hts_preproc.sh
 less hts_preproc.sh
 ```
 
@@ -676,35 +678,35 @@ When you are done, type "q" to exit.
 
 <div class="script">#!/bin/bash
 
+## runs HTStream across a number all samples in a project
 ## assumes htstream is available on the Path
-
 start=`date +%s`
 echo $HOSTNAME
 
+RRNA="References/human_rrna.fasta"
 inpath="00-RawData"
 outpath="01-HTS_Preproc"
 [[ -d ${outpath} ]] || mkdir ${outpath}
 
 for sample in `cat samples.txt`
 do
-  [[ -d ${outpath}/${sample} ]] || mkdir ${outpath}/${sample}
   echo "SAMPLE: ${sample}"
 
-  call="hts_Stats -L ${outpath}/${sample}/${sample}.json -N 'initial stats' \
-            -1 ${inpath}/${sample}.R1.fastq.gz \
-            -2 ${inpath}/${sample}.R2.fastq.gz | \
-        hts_SeqScreener -A ${outpath}/${sample}/${sample}.json -N 'screen phix' | \
-        hts_SeqScreener -A ${outpath}/${sample}/${sample}.json -N 'count the number of rRNA reads'\
-            -r -s References/human_rrna.fasta | \
-        hts_SuperDeduper -A ${outpath}/${sample}/${sample}.json -N 'remove PCR duplicates' | \
-        hts_Overlapper -A ${outpath}/${sample}/${sample}.json -N 'trim adapters' | \
-        hts_PolyATTrim --no-left --skip_polyT  -A ${outpath}/${sample}/${sample}.json -N 'remove polyAT tails' | \
-        hts_NTrimmer -A ${outpath}/${sample}/${sample}.json -N 'remove any remaining N characters' | \
-        hts_QWindowTrim -A ${outpath}/${sample}/${sample}.json -N 'quality trim the ends of reads' | \
-        hts_LengthFilter -A ${outpath}/${sample}/${sample}.json -N 'remove reads < 50bp' \
+  call="hts_Stats -L ${outpath}/${sample}.json -N 'initial stats' \
+            -1 ${inpath}/${sample}_L008_R1_001.fastq.gz \
+            -2 ${inpath}/${sample}_L008_R1_001.fastq.gz | \
+        hts_SeqScreener -A ${outpath}/${sample}.json -N 'screen phix' | \
+        hts_SeqScreener -A ${outpath}/${sample}.json -N 'count the number of rRNA reads'\
+            -r -s $RRNA | \
+        hts_SuperDeduper -A ${outpath}/${sample}.json -N 'remove PCR duplicates' | \
+        hts_Overlapper -A ${outpath}/${sample}.json -N 'trim adapters' | \
+        hts_PolyATTrim --no-left --skip_polyT  -A ${outpath}/${sample}.json -N 'remove polyAT tails' | \
+        hts_NTrimmer -A ${outpath}/${sample}.json -N 'remove any remaining N characters' | \
+        hts_QWindowTrim -A ${outpath}/${sample}.json -N 'quality trim the ends of reads' | \
+        hts_LengthFilter -A ${outpath}/${sample}.json -N 'remove reads < 50bp' \
             -n -m 50 | \
-        hts_Stats -A ${outpath}/${sample}/${sample}.json -N 'final stats' \
-            -f ${outpath}/${sample}/${sample}"
+        hts_Stats -A ${outpath}/${sample}.json -N 'final stats' \
+            -f ${outpath}/${sample}"
 
   echo $call
   eval $call
@@ -724,12 +726,11 @@ mkdir -p 01-HTS_Preproc
 bash hts_preproc.sh  # moment of truth!
 ```
 
-
 ## Quality Assurance - Preprocessing statistics as QA/QC.
 
 Beyond generating "better" data for downstream analysis, cleaning statistics also give you an idea as to the original quality and complexity of the sample, library generation, and sequencing quality.
 
-The first step in this process is to talk with your sequencing provider to ask about run level quality metrics. The major sequencing platforms all provide quality metrics that can provide insight into whether things might have gone wrong during library preparation or sequencing. Sequencing providers often generate reports and provide them along with the sequencing data.
+The first step in this process is to look at the run level quality metrics. The major sequencing platforms all provide quality metrics that can provide insight into whether things might have gone wrong during library preparation or sequencing. Sequencing providers often generate reports and provide them along with the sequencing data.
 
 ### BaseSpace Plots for Illumina data
 
@@ -754,8 +755,9 @@ check the output files. First check the number of forward and reverse output
 
 ```bash
 cd 01-HTS_Preproc
-ls */*_R1* | wc -l
-ls */*_R2* | wc -l
+ls *_R1* | wc -l
+ls *_R2* | wc -l
+ls *_SE* | wc -l
 ```
 
 *Did you get the answer you expected, why or why not?*
@@ -785,7 +787,7 @@ Now look at the output file:
 
 
 ```bash
-zless 01-HTS_Preproc/NEB_Mixed-10-ng-1/NEB_Mixed-10-ng-1_R1.fastq.gz
+zless 01-HTS_Preproc/NEB_Mixed-10-ng-1_1M_S383_R1.fastq.gz
 ```
 
 
@@ -800,7 +802,7 @@ zcat  00-RawData/NEB_Mixed-10-ng-1_1M_S383_L008_R1_001.fastq.gz | grep --color=a
  * *What do you observe? Are these sequences useful for analysis?*
 
  ```bash
- zcat  01-HTS_Preproc/NEB_Mixed-10-ng-1/NEB_Mixed-10-ng-1_R1.fastq.gz | grep --color=auto  AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC
+ zcat  01-HTS_Preproc/NEB_Mixed-10-ng-1_1M_S383_R1.fastq.gz | grep --color=auto  AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC
  ```
 
 
@@ -808,7 +810,7 @@ Lets grep for the sequence and count occurrences
 
 ```bash
 zcat  00-RawData/NEB_Mixed-10-ng-1_1M_S383_L008_R1_001.fastq.gz | grep  AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC | wc -l
-zcat  01-HTS_Preproc/NEB_Mixed-10-ng-1/NEB_Mixed-10-ng-1_R1.fastq.gz | grep  AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC | wc -l
+zcat  01-HTS_Preproc/NEB_Mixed-10-ng-1_1M_S383_R1.fastq.gz | grep  AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC | wc -l
 ```
 
 * *What is the reduction in adapters found?* (1704812)
@@ -847,8 +849,14 @@ multiqc -i HTSMultiQC-cleaning-report -o 02-HTS_multiqc_report ./01-HTS_Preproc
 ```
 
 Transfer HTSMultiQC-cleaning-report_multiqc_report.html to your computer and open it in a web browser.
+You can use 'scp' to move it from the server to your computer.
 
+On your computer navigate (on the command line) to the directory you'd like to transfer the file to.
+then
 
+```bash
+scp -r [USERNAME]@cat-bergamo1:/mnt/analysis/cat_users/matt/rnaseq_example/02-HTS_multiqc_report/*.html .
+```
 Or in case of emergency, download this copy: [HTSMultiQC-cleaning-report_multiqc_report.html](../datasets/02-HTS_multiqc_report/HTSMultiQC-cleaning-report_multiqc_report.html)
 
 **Questions**

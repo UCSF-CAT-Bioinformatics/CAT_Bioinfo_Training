@@ -1,0 +1,4 @@
+Sample	R1 Read Lengths	R2 Read Lengths
+NEB_Mixed-10-ng-1_1M_S383	151	151
+NEB_Mixed-10-ng-2_S384	151	151
+NEB_Mixed-10-ng-3_S385	151	151
