@@ -75,21 +75,35 @@ cd /data
 
 Run crispr_sites -r to find candidate Cas9-gRNAs in your input.
 
+```bash
 cat test_reads.fasta | crispr_sites -r > input_sites_to_reads.txt
+```
 
+```bash
 cat test_expected_reads_dashed.fasta | crispr_sites > ontarget_sites.txt
+```
 
+```bash
 cat test_expected_reads_undashed.fasta | crispr_sites > offtarget_sites.txt
+```
 
 #doesn't work, offtarget app fails
 #ontarget and offtarget filtering require port 8080 to be available on your computer.
+```bash
 dashit_filter --gc_freq_min 5 --gc_freq_max 15 --ontarget ontarget.txt --offtarget offtarget.txt input_sites_to_reads.txt > input_sites_to_reads_filtered.txt
+```
 
+```bash
 dashit_filter --gc_freq_min 5 --gc_freq_max 15 input_sites_to_reads.txt > input_sites_to_reads_filtered.txt
+```
 
 #Find 25 guides that hit the largest number of reads
+```bash
 optimize_guides input_sites_to_reads_filtered.txt 25 1 > guides.csv
+```
 
 The number of times to cover each read option, here set to 1, is how many guides need to hit a read in input.fasta before that read is considered covered. In principle you could use this for additional redundancy, but in practice we’ve never needed anything other than 1
 
+```bash
 score_guides guides.csv test_reads.fasta
+```
