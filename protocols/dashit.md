@@ -44,3 +44,34 @@ However, docker requires you to run it under admin (sudo)
 
 I've created a singularity docker sandbox that we can run on ther server.
 
+Lets create our environment
+```bash
+cd /mnt/analysis/cat_users/$USER
+mkdir -p dashit
+cd dashit
+```
+
+lets copy over some example data
+
+```bash
+cp -r /mnt/analysis/software/dashit/misc/tests/data .
+```
+
+NOW lets launch DASHit
+
+```bash
+singularity exec --bind /mnt/analysis/software/dashit/misc/tests/data:/data /mnt/analysis/software/dashit/dashit_sandbox bash
+```
+
+This should produce 
+```
+Singularity>
+```
+
+Now cd into data
+```bash
+cd /data
+```
+
+
+
