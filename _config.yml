@@ -6,8 +6,10 @@ navigation:
     url: /
 
   - heading: October 2024
-  - title: Intro preprocessing (Oct 9,18)
+  - title: Intro preprocessing (Oct 9,18,23)
     url: data_reduction/01-preproc_htstream_mm
+  - title: DASHit Protocol (Oct 30)
+    url: protocols/dashit
 
   - heading: Support
   - title: Cheat Sheets
