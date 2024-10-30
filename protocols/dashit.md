@@ -60,7 +60,7 @@ cp -r /mnt/analysis/software/dashit/misc/tests/data .
 NOW lets launch DASHit
 
 ```bash
-singularity exec --bind /mnt/analysis/software/dashit/misc/tests/data:/data /mnt/analysis/software/dashit/dashit_sandbox bash
+singularity exec --bind /mnt/analysis/cat_users/$USER/dashit/data:/data /mnt/analysis/software/dashit/dashit_sandbox bash
 ```
 
 This should produce 
