@@ -28,5 +28,19 @@
 9. Use optimize_guides to return a predefined number of reads meeting a certain requirement.
 10. Score final guides against the input reads.
     
-    
+### Starting up DASHit
+
+SO code seems to be pretty old and I can't get it to install on the server, probably could get it to work on my laptop, but thats not the point.
+
+Next the code does have a docker container that works, 
+
+* Docker is a platform for creating, deploying, and managing lightweight, isolated environments called containers, which bundle applications with their dependencies to ensure consistent performance across different systems. It allows developers to build once and run anywhere, improving portability and scalability.
+
+However, docker requires you to run it under admin (sudo)
+
+* Singularity, is a container platform designed for high-performance computing (HPC) and scientific applications, enabling users to run applications in isolated environments without needing root privileges. It’s optimized for compatibility with shared computing resources, making it ideal for securely running complex applications and reproducible research across different systems.
+
+* The main difference between Docker and Singularity is their focus on use cases and security: Docker is designed primarily for software development, microservices, and scalable web applications, often requiring root privileges to manage containers. Singularity, on the other hand, is tailored for high-performance computing (HPC) environments, allowing users to run containers securely without root access, making it ideal for shared computing resources in academic and research settings.
+
+I've created a singularity docker sandbox that we can run on ther server.
 
