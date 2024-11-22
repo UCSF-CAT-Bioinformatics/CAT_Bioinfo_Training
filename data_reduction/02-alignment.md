@@ -270,7 +270,7 @@ Here you can download IGV for your respective platform (Window, Mac OSX, Linux),
 
 <img src="alignment_figures/index_igv3.png" alt="index_igv3" width="80%" style="border:5px solid #ADD8E6;"/>
 
-1. The first thing we want to do is load the Mouse genome. Click on "Genomes" in the menu and choose "Mouse (GRCm39/mm39)".
+1. The first thing we want to do is load the Human genome. Click on "Genomes" in the menu and choose "Human (GRCh38/hg19)".
 
 <img src="alignment_figures/index_igv4.png" alt="index_igv4" width="80%" style="border:5px solid #ADD8E6;"/>
 
