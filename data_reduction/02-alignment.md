@@ -286,7 +286,7 @@ Now your alignment is loaded. Any loaded bam file aligned to a genome is called 
 
 <img src="alignment_figures/index_igv7.png" alt="index_igv7" width="80%" style="border:5px solid #ADD8E6;"/>
 
-1. Lets take a look at the alignment associated with the gene __Fn1__, and if for some reason it doesn't find HBB (web IGV can be fickle) go to position __chr1:71,610,633-71,628,073__. If you don't see any reads, this likely means your in the wrong genome, double check that it says **mm39** in the top left.
+1. Lets take a look at the alignment associated with the gene __HBB__, and if for some reason it doesn't find HBB (web IGV can be fickle) go to position __chr11:5,244,694-5,250,301__. If you don't see any reads, this likely means your in the wrong genome, double check that it says **hg19** in the top left.
 
 <img src="alignment_figures/index_igv8.png" alt="index_igv8" width="80%" style="border:5px solid #ADD8E6;"/>
 
@@ -300,7 +300,7 @@ You can also zoom in by clicking and dragging across the number line at the top.
 
 <img src="alignment_figures/index_igv11.png" alt="index_igv11" width="80%" style="border:5px solid #ADD8E6;"/>
 
-Reset the window by searching for Fn1 again, **and** then zoom in 2 steps.
+Reset the window by searching for HBB again, **and** then zoom in 2 steps.
 
 <img src="alignment_figures/index_igv12.png" alt="index_igv12" width="80%" style="border:5px solid #ADD8E6;"/>
 
