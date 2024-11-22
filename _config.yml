@@ -16,12 +16,6 @@ navigation:
     url: data_reduction/02-alignment-indexref
   - title: Intro RNA Alignment (Jordan Data) (Nov 22)
     url: data_reduction/02-alignment
-  - title: Getting RNA Counts (Jordan Data)
-    url: data_reduction/03-counts
-
-  - heading: December 2024
-  - title: Intro RNA mapping (Jordan Data) (Nov 22)
-    url: data_reduction/01-preproc_htstream
 
   - heading: Support
   - title: Cheat Sheets
