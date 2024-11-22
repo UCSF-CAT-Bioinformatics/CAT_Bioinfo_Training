@@ -1,29 +1,38 @@
 # Alignment to Read Counts & Visualization in IGV
 
-1. Initial Setup
-1. Mapping vs Assembly
-2. Aligners/Mappers
-3. Mapping against the genome vs transcriptome
-4. Counting reads as a proxy for gene expression
-5. Alignments
-6. Running STAR on the experiment
-7. Quality Assurance - Mapping statistics as QA/QC.
+## **Learning Objectives**
+1. **Distinguish Key Concepts in Mapping and Assembly:**
+   - Explain the differences between mapping (alignment to a reference) and assembly (constructing sequences without a reference).
+   - Identify the challenges and solutions associated with mapping RNA-Seq data, such as repetitive regions, splicing, and genetic variation.
 
----
-## Initial Setup
+2. **Comprehend Essential Alignment Metrics:**
+   - Define and interpret multimappers, duplicates, soft-clipping, and splicing.
+   - Evaluate mapping quality and understand its impact on downstream analyses.
 
-*This document assumes [preproc htstream](./preproc_htstream.md) has been completed.*
-To catch up to where we are:
+3. **Utilize RNA-Seq Alignment Tools:**
+   - Run RNA-Seq alignment using STAR, including setting appropriate parameters for counting reads at the gene level.
+   - Generate and interpret mapping statistics using custom scripts (e.g., `star_stats.sh`).
 
-```
-cd /share/workshop/$USER/rnaseq_example
+4. **Understand Reference Genome Requirements:**
+   - Select appropriate genome FASTA and GTF files for RNA-Seq mapping.
+   - Identify the importance of matching chromosome names and including organelles or additional sequences if needed.
 
-refcheck=$(egrep "DONE: Genome generation" References/star.overlap100.gencode.M35/Log.out)
-if [[ ! -z $refcheck ]]
-then
-  ln -s /share/workshop/original_dataset/References/star.overlap100.gencode.M35 /share/workshop/$USER/rnaseq_example/References/.
-fi
-```
+5. **Apply Tools for Data Quality Assessment:**
+   - Use mapping statistics to ensure alignment quality across samples.
+   - Troubleshoot common errors in alignment outputs.
+
+6. **Analyze and Visualize Alignment Outputs:**
+   - Load and explore BAM files in IGV to inspect gene-level alignments.
+   - Identify patterns in aligned reads and relate them to experimental outcomes (e.g., high expression regions).
+
+7. **Prepare Data for Differential Expression Analysis:**
+   - Generate gene count matrices from RNA-Seq alignments.
+   - Compare different counting strategies (e.g., union, intersection-strict) and their implications for downstream analyses.
+
+8. **Collaborate in Problem-Solving Exercises:**
+   - Interpret STAR alignment results and mapping summaries collaboratively.
+   - Investigate specific genomic regions using IGV to link experimental observations to biological insights.
+
 
 ---
 ## Mapping vs Assembly
@@ -172,16 +181,26 @@ ENSMUSG00000104017	0	0	0
 
 Choose the appropriate column given the library preparation characteristics and generate a matrix expression table, columns are samples, rows are genes.
 
-What does stranded and unstranded mean? Which is better and why? [Stranded vs Unstraded](https://www.ecseq.com/support/ngs/how-do-strand-specific-sequencing-protocols-work)
+What does stranded and unstranded mean? Which is better and why? [Stranded vs Unstranded](https://www.ecseq.com/support/ngs/how-do-strand-specific-sequencing-protocols-work)
+
+---
+## Initial Setup
+
+*This document assumes [preproc htstream](./02-alignment-indexref.md) has been completed.*
+To catch up to where we are:
+
+```
+cd /mnt/analysis/cat_users/$USER/rnaseq_example
+
+refcheck=$(egrep "DONE: Genome generation" ./References/star.overlap100.gencode.v47/Log.out)
+if [[ ! -z $refcheck ]]
+then
+  ln -s /mnt/analysis/workshop/CAT_Training/References/star.overlap100.gencode.v47 /mnt/analysis/cat_users/$USER/rnaseq_example/References/.
+fi
+```
 
 ---
 ## Alignments
-
-1. We are now ready to try an alignment:
-
-```bash
-cd /share/workshop/$USER/rnaseq_example
-```
 
 1. Then run the star commands
 
@@ -189,15 +208,15 @@ cd /share/workshop/$USER/rnaseq_example
 mkdir tmp
 STAR \
 --runThreadN 4 \
-    --genomeDir /share/workshop/$USER/rnaseq_example/References/star.overlap100.gencode.M35 \
+    --genomeDir /mnt/analysis/cat_users/$USER/rnaseq_example/References/star.overlap100.gencode.v47 \
     --outSAMtype BAM SortedByCoordinate \
     --quantMode GeneCounts \
-    --outFileNamePrefix tmp/mouse_110_WT_C.htstream_ \
+    --outFileNamePrefix ./tmp/NEB_Mixed-10-ng-1_1M_S383.htstream_ \
     --readFilesCommand zcat \
-    --readFilesIn  01-HTS_Preproc/mouse_110_WT_C/mouse_110_WT_C_R1.fastq.gz  01-HTS_Preproc/mouse_110_WT_C/mouse_110_WT_C_R2.fastq.gz
+    --readFilesIn  ./01-HTS_Preproc/NEB_Mixed-10-ng-1_1M_S383_R1.fastq.gz  ./01-HTS_Preproc/NEB_Mixed-10-ng-1_1M_S383_R1.fastq.gz
 ```
 
-In the command, we are telling star to count reads on a gene level ('--quantMode GeneCounts'), the prefix for all the output files will be mouse_110_WT_C.htstream_, the command to unzip the files (zcat), and finally, the input file pair.
+In the command, we are telling star to count reads on a gene level ('--quantMode GeneCounts'), the prefix for all the output files will be ./tmp/NEB_Mixed-10-ng-1_1M_S383.htstream_, the command to unzip the files (zcat), and finally, the input file pair.
 
 
 ###  Now let's take a look at an alignment in IGV.
@@ -205,7 +224,6 @@ In the command, we are telling star to count reads on a gene level ('--quantMode
 1.  We first need to index the bam file, will use 'samtools' for this step, which is a program to manipulate SAM/BAM files. Take a look at the options for samtools and 'samtools index'.
 
 ```bash
-module load samtools
 samtools
 samtools index
 ```
@@ -213,26 +231,26 @@ samtools index
 We need to index the BAM file:
 
 ```bash
-cd /share/workshop/$USER/rnaseq_example/HTS_testing
-samtools index mouse_110_WT_C.htstream_Aligned.sortedByCoord.out.bam
+cd /mnt/analysis/cat_users/$USER/rnaseq_example/tmp
+samtools index NEB_Mixed-10-ng-1_1M_S383.htstream_Aligned.sortedByCoord.out.bam
 ```
 
 **IF for some reason it didn't finish, is corrupted or you missed the session, you can copy over a completed copy.**
 
 ```bash
-cp /share/biocore/workshops/2023-June-mRNASeq/HTS_testing/mouse_110_WT_C.htstream_Aligned.sortedByCoord.out.bam* /share/workshop/$USER/rnaseq_example/HTS_testing
+cp /mnt/analysis/workshop/CAT_Training/tmp/NEB_Mixed-10-ng-1_1M_S383.htstream_Aligned.sortedByCoord.out.bam* /mnt/analysis/cat_users/$USER/rnaseq_example/tmp
 ```
 
-2. Transfer mouse_110_WT_C.htstream_Aligned.sortedByCoord.out.bam and mouse_110_WT_C.htstream_Aligned.sortedByCoord.out.bam.bai (the index file) to your computer using scp,FileZilla or winSCP.
-
-Windows users can use WinSCP or FileZilla, both of which are GUI based.
+2. Transfer ./tmp/NEB_Mixed-10-ng-1_1M_S383.htstream_Aligned.sortedByCoord.out.bam and ./tmp/NEB_Mixed-10-ng-1_1M_S383.htstream_Aligned.sortedByCoord.out.bam.bai (the index file) to your computer using scp,FileZilla or winSCP.
 
 Mac/Linux users can use scp. In a new shell session on my laptop. **NOT logged into tadpole. Replace [your_username] with your username.**
+
+**ON YOUR PERSONAL COMPUTER**
 
 ```bash
 mkdir ~/rnaseq_workshop
 cd ~/rnaseq_workshop
-scp [your_username]@tadpole.genomecenter.ucdavis.edu:/share/workshop/mrnaseq_workshop/[your_username]/rnaseq_example/HTS_testing/mouse_110_WT_C.htstream_Aligned.sortedByCoord.out.bam* .
+scp [your_username]@cat-bergamo1.ucsf.edu:/mnt/analysis/cat_users/[your_username]/rnaseq_example/tmp/NEB_Mixed-10-ng-1_1M_S383.htstream_Aligned.sortedByCoord.out.bam* .
 ```
 
 Its ok if the mkdir command fails ("File exists") because we aleady created the directory earlier.
@@ -306,11 +324,11 @@ Reset the window by searching for Fn1 again, **and** then zoom in 2 steps.
 - work through QA/QC of the experiment
 - complete the questions at the end
 
-1. We can now run STAR across all samples on the real data using a SLURM script, [star.slurm](../scripts/star.slurm), that we should take a look at now.
+1. We can now run STAR across all samples on the real data using a script, [star.sh](../scripts/star.sh), that we should take a look at now.
 
 ```bash
-cd /share/workshop/$USER/rnaseq_example  # We'll run this from the main directory
-wget https://raw.githubusercontent.com/ucsf-cat-bioinformatics/2024-08-RNA-Seq-Analysis/master/software_scripts/scripts/star.sh
+cd /mnt/analysis/cat_users/$USER/rnaseq_example  # We'll run this from the main directory
+wget https://raw.githubusercontent.com/ucsf-cat-bioinformatics/CAT_BIOINFO_TRAINING/master/software_scripts/scripts/star.sh
 less star.sh
 ```
 
@@ -325,7 +343,7 @@ echo $HOSTNAME
 outpath='02-STAR_alignment'
 [[ -d ${outpath} ]] || mkdir ${outpath}
 
-REF="References/star.overlap100.gencode.M35"
+REF="./References/star.overlap100.gencode.v47"
 
 for sample in `cat samples.txt`
 do
@@ -337,7 +355,7 @@ do
        --genomeDir $REF \
        --outSAMtype BAM SortedByCoordinate \
        --readFilesCommand zcat \
-       --readFilesIn 01-HTS_Preproc/${sample}/${sample}_R1.fastq.gz 01-HTS_Preproc/${sample}/${sample}_R2.fastq.gz \
+       --readFilesIn 01-HTS_Preproc/${sample}_R1.fastq.gz 01-HTS_Preproc/${sample}_R2.fastq.gz \
        --quantMode GeneCounts \
        --outFileNamePrefix ${outpath}/${sample}/${sample}_ \
        > ${outpath}/${sample}/${sample}-STAR.stdout 2> ${outpath}/${sample}/${sample}-STAR.stderr"
@@ -355,7 +373,7 @@ echo $runtime
 When you are done, type "q" to exit.
 
 {:start="2"}
-2. After looking at the script, lets run it.
+1. After looking at the script, lets run it.
 
 ```bash
 bash star.sh  # moment of truth!
@@ -369,8 +387,8 @@ bash star.sh  # moment of truth!
 Use a script of ours, [star_stats.sh](../software_scripts/scripts/star_stats.sh) to collect the alignment stats. Don't worry about the script's contents at the moment; you'll use very similar commands to create a counts table in the next section. For now:
 
 ```bash
-cd /share/workshop/$USER/rnaseq_example # We'll run this from the main directory
-wget https://raw.githubusercontent.com/ucsf-cat-bioinformatics/2024-08-RNA-Seq-Analysis/master/software_scripts/scripts/star_stats.sh
+cd /mnt/analysis/cat_users/$USER/rnaseq_example # We'll run this from the main directory
+wget https://raw.githubusercontent.com/ucsf-cat-bioinformatics/CAT_BIOINFO_TRAINING/master/software_scripts/scripts/star_stats.sh
 bash star_stats.sh
 ```
 
@@ -405,7 +423,7 @@ Or in case of emergency, download this copy: [summary_star_alignments.txt](../da
 
 
 **Questions:**
-1. Look through the files in an output directory and check out what is present and discuss what each of them mean. (for example: `cd /share/workshop/$USER/rnaseq_example/02-STAR_alignment/mouse_110_WT_C` )
+1. Look through the files in an output directory and check out what is present and discuss what each of them mean. (for example: `cd /mnt/analysis/cat_users/$USER/rnaseq_example/02-STAR_alignment/mouse_110_WT_C` )
 2. Come up with a brief command you might use to check that all of the sample alignments using STAR have a reasonable output and/or did not produce any errors.
 3. Open `summary_star_alignments.txt` in excel (or excel like application), and review. The table that this script creates ("summary_star_alignments.txt"). Are all samples behaving similarly? Discuss ...
 4. If time, find some other regions/genes with high expression using IGV with your group. (Looking at genes the paper references is a great place to start)

@@ -13,7 +13,7 @@ cd ${outpath}
 
 wget https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_47/GRCh38.primary_assembly.genome.fa.gz
 gunzip GRCh38.primary_assembly.genome.fa.gz
-FASTA="../GRCh38.primary_assembly.genome.fa.gz"
+FASTA="../GRCh38.primary_assembly.genome.fa"
 
 
 wget https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_47/gencode.v47.basic.annotation.gtf.gz

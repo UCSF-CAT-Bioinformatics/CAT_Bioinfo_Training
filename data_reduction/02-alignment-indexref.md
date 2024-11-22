@@ -66,7 +66,7 @@ The basic options to generate genome indices using STAR are as follows:
 
 *NOTE:* In case of reads of varying length, the ideal value for --sjdbOverhang is max(ReadLength)-1. In most cases, the default value of 100 will work similarly to the ideal value.
 
-1. First we need to index the genome for STAR. Lets pull down a slurm script to index the Ensembl version of the human genome.
+1. First we need to index the genome for STAR. Lets pull down a script to index the Ensembl version of the human genome.
 
 
 ```bash
@@ -90,7 +90,7 @@ cd ${outpath}
 
 wget https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_47/GRCh38.primary_assembly.genome.fa.gz
 gunzip GRCh38.primary_assembly.genome.fa.gz
-FASTA="../GRCh38.primary_assembly.genome.fa.gz"
+FASTA="../GRCh38.primary_assembly.genome.fa"
 
 
 wget https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_47/gencode.v47.basic.annotation.gtf.gz
