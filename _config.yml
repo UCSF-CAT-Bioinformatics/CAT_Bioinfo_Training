@@ -6,10 +6,14 @@ navigation:
     url: /
 
   - heading: October 2024
-  - title: Intro preprocessing (Oct 9,18,23)
-    url: data_reduction/01-preproc_htstream_mm
+  - title: Intro preprocessing (Jordan Data) (Oct 9,18,23)
+    url: data_reduction/01-preproc_htstream
   - title: DASHit Protocol (Oct 30)
     url: protocols/dashit
+
+  - heading: November 2024
+  - title: Intro RNA mapping (Jordan Data) (Nov 22)
+    url: data_reduction/01-preproc_htstream
 
   - heading: Support
   - title: Cheat Sheets

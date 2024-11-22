@@ -158,7 +158,7 @@ PCA/MDS plots of the preprocessing summary are a great way to look for technical
 
 **Many technical things happen between original sample and data. Preprocessing is working backwards through that process to get as close as we can to original sample.**
 
-<img src="preproc_mm_figures/preproc_flowchart.png" alt="preproc_flowchart" width="80%"/>
+<img src="preproc_figures/preproc_flowchart.png" alt="preproc_flowchart" width="80%"/>
 
 
 In order to better understand and preprocess an RNA-seq data set (and to determine the types of problems we might encounter), it is a good idea to know what type of library prep kit was used, and how it works.
@@ -196,11 +196,11 @@ HTStream achieves these benefits by using a tab delimited intermediate format th
 
 #### A traditional preprocessing pipeline:
 
-<img src="preproc_mm_figures/typical_pipeline.png" alt="typical_pipeline" width="80%"/>
+<img src="preproc_figures/typical_pipeline.png" alt="typical_pipeline" width="80%"/>
 
 
 #### An HTStream preprocessing pipline:
-<img src="preproc_mm_figures/htstream_pipeline.png" alt="typical_pipeline" width="80%"/>
+<img src="preproc_figures/htstream_pipeline.png" alt="typical_pipeline" width="80%"/>
 
 
 This approach also uses significantly less storage as there are no intermediate files. HTStream can do this by streaming a tab-delimited format called tab6.
@@ -369,27 +369,27 @@ We will use these sequences to identify rRNA in our reads, which are from human.
 
 1. First, go to [NCBI](https://www.ncbi.nlm.nih.gov/) and in the Search drop down select "Taxonomy" and search for "human".
 
-    <img src="preproc_mm_figures/ncbi_hs_01.png" alt="ncbi1" width="80%" style="border:5px solid #ADD8E6;"/>
+    <img src="preproc_figures/ncbi_hs_01.png" alt="ncbi1" width="80%" style="border:5px solid #ADD8E6;"/>
 
 1. Click on "Homo sapiens".
 
-    <img src="preproc_mm_figures/ncbi_hs_02.png" alt="ncbi2" width="80%" style="border:5px solid #ADD8E6;"/>
+    <img src="preproc_figures/ncbi_hs_02.png" alt="ncbi2" width="80%" style="border:5px solid #ADD8E6;"/>
 
 1. Click on "Homo sapiens" again.
 
-    <img src="preproc_mm_figures/ncbi_hs_03.png" alt="ncbi3" width="80%" style="border:5px solid #ADD8E6;"/>
+    <img src="preproc_figures/ncbi_hs_03.png" alt="ncbi3" width="80%" style="border:5px solid #ADD8E6;"/>
 
 1. Click on the "Subtree links" for Nucleotide.
 
-    <img src="preproc_mm_figures/ncbi_hs_04.png" alt="ncbi4" width="80%" style="border:5px solid #ADD8E6;"/>
+    <img src="preproc_figures/ncbi_hs_04.png" alt="ncbi4" width="80%" style="border:5px solid #ADD8E6;"/>
 
 1. Under Molecule Types, click on "rRNA" (left hand side).
 
-    <img src="preproc_mm_figures/ncbi_hs_05.png" alt="ncbi5" width="80%" style="border:5px solid #ADD8E6;"/>
+    <img src="preproc_figures/ncbi_hs_05.png" alt="ncbi5" width="80%" style="border:5px solid #ADD8E6;"/>
 
 1. Click on "Send", choose "File", choose Format "FASTA", and click on "Create File".
 
-    <img src="preproc_mm_figures/ncbi_hs_06.png" alt="ncbi6" width="80%" style="border:5px solid #ADD8E6;"/>
+    <img src="preproc_figures/ncbi_hs_06.png" alt="ncbi6" width="80%" style="border:5px solid #ADD8E6;"/>
 
 
 Save this file to your computer, and rename it to 'human_rrna.fasta'.
@@ -516,12 +516,12 @@ However, this approach requires that there be a reference to map reads against a
 hts_SuperDeduper does not require a reference or mapped reads. Instead it uses a small portion of each paired read to identify duplicates. If an identical pattern is identified in multiple reads, extra copies are discarded.
 
 
-<img src="preproc_mm_figures/SD_eval.png" alt="SD_eval" width="80%"/>
+<img src="preproc_figures/SD_eval.png" alt="SD_eval" width="80%"/>
 
 This table compares the performance of SuperDeduper against some other duplicate removal algorithms. Two data sets were tested, PhiX spike in reads and reads from *Acropora digitifera* (a type of coral). The number of unique reads identified is listed along with the percentage of duplicates not reported by other tools in parentheses. SuperDeduper performance is similar to other mapping based deduplication tools (MarkDuplicates and Rmdup), however it identifies slightly more unique reads (in some cases these were unmapped reads, in other cases reads with sequencing errors in the key region). FastUniq and Fulcrum are two other tools that do not rely on mapping. They identified a much larger set of reads as being unique.
 
 
-<img src="preproc_mm_figures/SD_performance.png" alt="SD_performance" width="80%"/>
+<img src="preproc_figures/SD_performance.png" alt="SD_performance" width="80%"/>
 
 We calculated the Youden Index for every combination tested (using results from Picard MarkDuplicates as ground truth). The point that acquired the highest index value occurred at a start position of 5 and a length of 10bp (20bp total over both reads). However in order to avoid the often lower-quality region in the first ~10bp of Illumina Read1, hts_SuperDeduper uses a default start position of basepair 10 and a length of 10bp.
 
@@ -533,7 +533,7 @@ Consider the three scenarios below
 
 **Insert size > length of the number of cycles**
 
-<img src="preproc_mm_figures/overlap_pairs.png" alt="overlap_pairs" width="80%"/>
+<img src="preproc_figures/overlap_pairs.png" alt="overlap_pairs" width="80%"/>
 
 hts_AdapterTrimmer product: original pairs
 
@@ -541,7 +541,7 @@ hts_Overlapper product: original pairs
 
 **Insert size < length of the number of cycles (10bp min)**
 
-<img src="preproc_mm_figures/overlap_single.png" alt="overlap_single" width="80%"/>
+<img src="preproc_figures/overlap_single.png" alt="overlap_single" width="80%"/>
 
 hts_AdapterTrimmer product: original pairs
 
@@ -549,7 +549,7 @@ hts_Overlapper product: extended, single
 
 **Insert size < length of the read length**
 
-<img src="preproc_mm_figures/overlap_adapter.png" alt="overlap_adapter" width="80%"/>
+<img src="preproc_figures/overlap_adapter.png" alt="overlap_adapter" width="80%"/>
 
 hts_AdapterTrimmer product: adapter trimmed, pairs
 
@@ -592,7 +592,7 @@ Bases that cannot be called are assigned an "N" by the Illumina base caller. The
 
 As a sequencing run progresses the quality scores tend to get worse. Quality scores are essentially a guess about the accuracy of a base call, so it is common to trim of the worst quality bases.
 
-<img src="preproc_mm_figures/Qwindowtrim.png" alt="Qwindowtrim" width="80%"/>
+<img src="preproc_figures/Qwindowtrim.png" alt="Qwindowtrim" width="80%"/>
 
 This is how reads commonly look, they start at "good" quality, increase to "excellent" and degrade to "poor", with R2 always looking worse (except when they don't) than R1 and get worse as the number of cycles increases.
 
@@ -600,7 +600,7 @@ hts_QWindowTrim trims 5' and/or 3' end of the sequence using a windowing (averag
 
 ### What does all this preprocessing get you
 
-<img src="preproc_mm_figures/reads_per_gene_raw_hts-zoomed.png" alt="final" width="50%"/>
+<img src="preproc_figures/reads_per_gene_raw_hts-zoomed.png" alt="final" width="50%"/>
 
 Note that the very highly expressed transcript is [Lysozyme 2, ENSMUST00000092163.8](http://uswest.ensembl.org/Mus_musculus/Transcript/Summary?g=ENSMUSG00000069516;r=10:117277331-117282321;t=ENSMUST00000092163), a [primarily bacteriolytic enzyme](https://www.uniprot.org/uniprot/P08905). Not surprising given that "monocytes are components of the mononuclear phagocyte system that is involved in rapid recognition and clearance of invading pathogens".
 
@@ -734,12 +734,12 @@ The first step in this process is to look at the run level quality metrics. The 
 
 ### BaseSpace Plots for Illumina data
 
-<img src="preproc_mm_figures/good_run.png" alt="good" width="100%"/>
+<img src="preproc_figures/good_run.png" alt="good" width="100%"/>
 
 A nice run showing fairly random distribution of bases per cycle, > 80% bases above Q30, good cluster density and high pass filter rate, and very little drop off in read quality even at the end of the read.  
 
 
-<img src="preproc_mm_figures/bad_run_PDs.png" alt="bad" width="100%"/>
+<img src="preproc_figures/bad_run_PDs.png" alt="bad" width="100%"/>
 A poor run showing less base diversity, only 39% bases above Q30, potentially too high cluster density and low pass filter rate, and extreme drop off in read quality after ~100bp of R1, and an even worse profile in R2.  
 
 Results like those above can help inform you of how you might change your protocol/procedures in the future, either sample preparation (RNA extraction), or in library preparation.  
@@ -820,14 +820,14 @@ zcat  01-HTS_Preproc/NEB_Mixed-10-ng-1_1M_S383_R1.fastq.gz | grep  AGATCGGAAGAGC
 
 Primer dimers in this dataset:
 
-<img src="preproc_mm_figures/primer_dimers.png" alt="PrimerDimer" width="80%"/>
+<img src="preproc_figures/primer_dimers.png" alt="PrimerDimer" width="80%"/>
 
 
 * The set of "AAAA" bases directly adjacent to the Illumina adapter sequence are due to a spacing sequence on the flow cell. 
 * The "GGGGG" sequences occur because the NovaSeq X uses a 2-channel detection system, where the "G" base is the absence of signal. Once the polymerase reaches the end of the template + spacing sequence it stops, so all subsequent flow cycles produce no signal.
 
 
-<img src="preproc_mm_figures/sbs-redgreen-web-graphic.jpg" alt="PrimerDimer" width="80%"/>
+<img src="preproc_figures/sbs-redgreen-web-graphic.jpg" alt="PrimerDimer" width="80%"/>
 
 **Figure 2. 2-Channel SBS Imaging.**
 Accelerated detection of all 4 DNA bases is performed using only 2 images to capture red and green filter wavelength bands. A bases will be present in both images (yellow cluster), C bases in red only, T bases in green only, and G bases in neither.
