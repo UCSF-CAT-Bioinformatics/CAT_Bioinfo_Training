@@ -17,6 +17,10 @@ navigation:
   - title: Intro RNA Alignment (Jordan Data) (Nov 22)
     url: data_reduction/02-alignment
 
+  - heading: January 2025
+  - title: Intro to Bash Scripting (Jan 24)
+    url: intros/bashing
+
   - heading: Support
   - title: Cheat Sheets
     url: base/cheatSheetIndex
